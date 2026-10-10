@@ -3,7 +3,7 @@ id = "ff7.sephiroth"
 version = "0.1.0"
 name = "Sephiroth"
 author = "Final Fantasy VII Recompiled project"
-description = "Adds Sephiroth as a playable party member with his own stats, equipment, materia and progress."
+description = "Adds Sephiroth as an independent party member, unlocked whenever party changes are allowed. Fresh records start three levels above Cloud."
 save_compatibility = "shared"
 
 [[target]]
@@ -15,7 +15,7 @@ game_id = "SCUS-94163"
 id = "sephiroth"
 name = "Sephiroth"
 channel = "experimental"
-description = "Sephiroth joins as an independent party member: PHS, equipment, materia, menus, battle and EXP/AP work like the original cast. Vincent stays unchanged. Field animations, limits and some story scenes are still in progress. Requires a fresh launch; keep a backup of your memory card."
+description = "Sephiroth is unlocked whenever party changes are allowed, while story-required parties stay intact. A fresh record starts three levels above Cloud (up to level 99), then keeps its own stats and saved progress. PHS, equipment, materia, menus, battle and EXP/AP work like the original cast. Vincent stays unchanged. Field animations, limits and some story scenes are still in progress. Requires a fresh launch; keep a backup of your memory card."
 group = "Characters"
 default_enabled = false
 

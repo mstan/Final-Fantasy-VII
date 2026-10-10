@@ -27,6 +27,8 @@ typedef struct FF7PartyProfile {
     const char* field_source; /* Optional original DAT/BSX stem, e.g. FIELD/NIVL. */
     uint8_t field_model_index; /* Asset index only; never a script entity ID. */
     uint8_t limit_policy; /* Independent move/progression policy; zero unchanged. */
+    uint8_t initial_level_offset; /* Fresh record: growth_identity's level + offset;
+                                   * zero keeps the kernel template. Saved growth stays owned. */
 } FF7PartyProfile;
 
 int ff7_party_game_register_profile(const FF7PartyProfile* profile);

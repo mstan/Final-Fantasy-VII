@@ -24,7 +24,7 @@ static const uint32_t NATIVE_RECORDS = 0x8009c738u, ACTIVE = 0x8009cbdcu;
 static const FF7PartyProfile s_sephiroth = {
     FF7_PARTY_SEPHIROTH, 10, 7, 10, 0, 0, 0,
     "ENEMY6/SEFIROS.LZS", "MENU/PCEFI.TIM", FF7_PARTY_MOTION_SEPHIROTH,
-    "FIELD/NIVL", 3, FF7_LIMIT_SEPHIROTH
+    "FIELD/NIVL", 3, FF7_LIMIT_SEPHIROTH, 3
 };
 static const FF7PartyProfile* s_profiles[FF7_PARTY_EXTRA_CAPACITY];
 static unsigned s_profile_count;
@@ -264,10 +264,12 @@ int ff7_party_game_select(unsigned slot, uint16_t id) {
     return 1;
 }
 
-static int kernel_templates(uint8_t** result, uint32_t* result_size) {
+static int kernel_templates(uint8_t** result, uint8_t** growth_result,
+                            uint32_t* growth_size) {
     uint32_t size = 0, position = 0;
     uint8_t* raw = NULL;
     uint8_t* decoded = NULL;
+    uint8_t* growth = NULL;
     int ok = 0;
     if (!psx_mod_read_disc_file("INIT/KERNEL.BIN",NULL,0,&size) || size < 24 || size > 1024*1024)
         return 0;
@@ -279,9 +281,9 @@ static int kernel_templates(uint8_t** result, uint32_t* result_size) {
         uint32_t bytes = raw[position+2] | (uint32_t)raw[position+3]<<8;
         position += 6;
         if (compressed > size-position) goto done;
-        if (i == 3) {
+        if (i == 2 || i == 3) {
             z_stream stream;
-            if (bytes < 9*FF7_PARTY_RECORD_SIZE) goto done;
+            if (bytes < (i == 2 ? 0x61cu : 9*FF7_PARTY_RECORD_SIZE)) goto done;
             decoded = (uint8_t*)malloc(bytes);
             if (!decoded) goto done;
             memset(&stream,0,sizeof(stream));
@@ -289,19 +291,97 @@ static int kernel_templates(uint8_t** result, uint32_t* result_size) {
             stream.next_out = decoded; stream.avail_out = bytes;
             if (inflateInit2(&stream,31) != Z_OK) goto done;
             int status = inflate(&stream,Z_FINISH);
-            ok = status == Z_STREAM_END && stream.total_out == bytes &&
-                stream.total_in == compressed;
+            int valid = status == Z_STREAM_END && stream.total_out == bytes &&
+                        stream.total_in == compressed;
             inflateEnd(&stream);
-            if (!ok) goto done;
-            static const uint8_t ids[9] = {0,1,2,3,4,5,9,10,8};
-            for (unsigned row = 0; row < 9; ++row)
-                if (decoded[row*FF7_PARTY_RECORD_SIZE] != ids[row]) { ok=0; goto done; }
-            *result = decoded; *result_size = bytes; decoded = NULL;
+            if (!valid) goto done;
+            if (i == 2) {
+                growth = decoded; *growth_size = bytes; decoded = NULL;
+            } else {
+                static const uint8_t ids[9] = {0,1,2,3,4,5,9,10,8};
+                for (unsigned row = 0; row < 9; ++row)
+                    if (decoded[row*FF7_PARTY_RECORD_SIZE] != ids[row]) { ok=0; goto done; }
+                *result = decoded; *growth_result = growth;
+                decoded = NULL; growth = NULL;
+                ok = 1;
+            }
         }
         position += compressed;
     }
 done:
-    free(decoded); free(raw); return ok;
+    free(decoded); free(growth); free(raw); return ok;
+}
+
+static unsigned record_half(const uint8_t* r, unsigned offset) {
+    return r[offset] | (unsigned)r[offset+1]<<8;
+}
+static void record_half_set(uint8_t* r, unsigned offset, unsigned value) {
+    r[offset]=(uint8_t)value; r[offset+1]=(uint8_t)(value>>8);
+}
+static void record_word_set(uint8_t* r, unsigned offset, uint32_t value) {
+    record_half_set(r,offset,value); record_half_set(r,offset+2,value>>16);
+}
+static unsigned growth_group(unsigned level) {
+    return !level ? 0 : level < 61 ? (level-1)/10 : (level-61)/20+6;
+}
+static unsigned growth_index(int difference) {
+    /* Middle of retail's 1..8 roll, without consuming the guest RNG. */
+    int index=difference+4;
+    return index < 0 ? 0 : index > 11 ? 11 : (unsigned)index;
+}
+static int growth_baseline(const uint8_t* pair, unsigned stat, unsigned level) {
+    int base=(int8_t)pair[1];
+    if (stat == 6) return base*40+(int)(pair[0]*level);
+    if (stat == 7) return base*2+(int)(pair[0]*level/10);
+    return base+(int)(pair[0]*level/100);
+}
+static uint32_t growth_exp(const uint8_t* growth, unsigned curve, unsigned level) {
+    /* Retail 801b1320 selects one coefficient for the requested level, then
+     * sums floor(coefficient*i*i/10), i=1..level. */
+    unsigned coefficient=growth[0x21c+16*curve+2*growth_group(level)];
+    uint32_t total=0;
+    for (unsigned i=1; i<=level; ++i) total+=coefficient*i*i/10;
+    return total;
+}
+static int seed_relative_level(uint8_t* r, const FF7PartyProfile* p,
+                               const uint8_t* growth, uint32_t bytes) {
+    if (!p->initial_level_offset) return 1;
+    uint32_t source=NATIVE_RECORDS+p->growth_identity*FF7_PARTY_RECORD_SIZE;
+    unsigned level=psx_mod_read_byte(source+1);
+    unsigned hp=psx_mod_read_half(source+0x2e), mp=psx_mod_read_half(source+0x32);
+    const uint8_t* row=growth+11*p->growth_identity;
+    if (!level || level > 99 || !hp || !mp) return 0;
+    for (unsigned s=0; s<9; ++s)
+        if (0x21cu+16u*row[s]+16u > bytes) return 0;
+    unsigned target=level+p->initial_level_offset;
+    if (target > 99) target=99;
+    for (unsigned s=0; s<6; ++s) r[2+s]=psx_mod_read_byte(source+2+s);
+    memset(r+8,0,6); /* Fresh member does not inherit equipment stat bonuses. */
+    for (; level<target; ++level) {
+        unsigned group=growth_group(level);
+        for (unsigned s=0; s<8; ++s) {
+            const uint8_t* pair=growth+0x21c+16*row[s]+2*group;
+            int next=growth_baseline(pair,s,level+1);
+            if (s<6) {
+                unsigned value=r[2+s]+growth[0x1f8+growth_index(next-r[2+s])];
+                r[2+s]=(uint8_t)(value > 100 ? 100 : value);
+            } else {
+                unsigned* value=s==6 ? &hp : &mp;
+                int before=growth_baseline(pair,s,level);
+                unsigned index=growth_index(100*before/(int)*value-100);
+                int updated=(int)*value+(next-before)*growth[0x204+12*(s-6)+index]/100;
+                unsigned cap=s==6 ? 9999 : 999;
+                *value=updated<1 ? 1 : (unsigned)updated>cap ? cap : (unsigned)updated;
+            }
+        }
+    }
+    r[1]=(uint8_t)target; r[0x21]=target==99 ? 61 : 0;
+    record_half_set(r,0x2c,hp); record_half_set(r,0x2e,hp); record_half_set(r,0x38,hp);
+    record_half_set(r,0x30,mp); record_half_set(r,0x32,mp); record_half_set(r,0x3a,mp);
+    uint32_t exp=growth_exp(growth,row[8],target-1);
+    record_word_set(r,0x3c,exp);
+    record_word_set(r,0x80,target==99 ? 0 : growth_exp(growth,row[8],target)-exp);
+    return 1;
 }
 
 /* Kernel templates for scene-only rows (flashback Sephiroth) hold 0xFFFF
@@ -323,8 +403,9 @@ static void settle_template(uint8_t* r) {
 int ff7_party_game_initialize(const uint8_t fallback[3]) {
     if(!s_game || !valid_fallback(fallback))return 0;
     uint8_t* templates = NULL;
-    uint32_t size = 0;
-    if (!kernel_templates(&templates,&size)) {
+    uint8_t* growth = NULL;
+    uint32_t growth_size = 0;
+    if (!kernel_templates(&templates,&growth,&growth_size)) {
         psx_mod_counter_add("ff7.party_game.template_reject",1); return 0;
     }
     FF7PartyState state;
@@ -334,14 +415,18 @@ int ff7_party_game_initialize(const uint8_t fallback[3]) {
         const FF7PartyProfile* p = s_profiles[i];
         uint8_t record[FF7_PARTY_RECORD_SIZE];
         memcpy(record,templates+p->kernel_template_row*FF7_PARTY_RECORD_SIZE,sizeof record);
+        if (!seed_relative_level(record,p,growth,growth_size)) {
+            free(templates); free(growth);
+            psx_mod_counter_add("ff7.party_game.template_reject",1); return 0;
+        }
         settle_template(record);
         ff7_party_limit_initial(p->limit_policy,record);
         if (ff7_party_add(&state,p->identity,p->presentation,
                 record) != FF7_PARTY_OK) {
-            free(templates); return 0;
+            free(templates); free(growth); return 0;
         }
     }
-    free(templates);
+    free(templates); free(growth);
     if (ff7_party_game_load(&state,fallback) != FF7_PARTY_OK)return 0;
     psx_mod_counter_add("ff7.party_game.initialize",1);return 1;
 }
