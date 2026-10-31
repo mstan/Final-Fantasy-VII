@@ -28,6 +28,32 @@ text_size = "0x00060800"
 stack_base = "0x801FFFF0"
 
 # Digests are for data Track 01 (first BINARY FILE / TRACK 01).
+[recompiler]
+seeds = "seeds/ghidra_funcs.txt"
+out_dir = "generated"
+strict = true
+
+# Trusted game-mod entry hooks. The recompiler emits a psx_mod_function_entry()
+# call at the top of each of these functions; src/ff7_mods.c registers callbacks
+# against them. CHANGING THIS LIST REQUIRES A REGEN of generated/ — the call
+# sites are baked into the emitted C.
+#
+# This list is DERIVED, not hand-maintained: it is every symbols.toml entry with
+# hook = true. Regenerate/verify with
+#   python3 tools/sync_symbols.py --check-hooks
+# which prints this exact block on drift. Names come from the imported ff7-decomp
+# map and are status = "contextual" — unverified by us. The ff7.modhooks trace
+# feature is how you confirm one actually is what its name says.
+mod_function_entry_funcs = [
+    "0x80011C1C",  # main
+    "0x80017108",  # Unzip
+    "0x8001C434",  # SetupGamepad
+    "0x80025040",  # SnapshotPartyLevels
+    "0x800257CC",  # GetCharacterName
+    "0x80025B10",  # SystemMenuRemovePartyGold
+    "0x80025B48",  # SystemMenuAddPartyGold
+]
+
 [runtime]
 # Enable the overlay loader: the shipped static shard / bundled overlay
 # toolchain turn streamed overlays native instead of running them interpreted.
