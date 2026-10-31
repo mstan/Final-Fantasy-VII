@@ -10,20 +10,12 @@ exe = "disc/SCUS_941.63"
 # The launcher's Disc Selection dropdown offers all three; Play boots the
 # selected one (settings.toml [disc] selected remembers which).
 #
-# ABSOLUTE paths into the dump library — the images are NOT copied into this
-# repo. A 3-disc PS1 set is ~2.2 GB; staging it here would be a second copy of
-# ROMs the user already owns and stores elsewhere, for no gain (disc/ is
-# gitignored, so a staged copy is never shipped either). Only the small boot
-# EXE lives under disc/. Set up with setup_project.sh's default
-# --no-stage-disc; --stage-disc copies instead, and rewrites these to
-# "disc/<name>.cue".
-#
-# These paths are MACHINE-SPECIFIC: another checkout re-points them by running
-# setup with its own --disc, or by editing this list.
+# Portable paths to player-supplied images; discs are never shipped.
+# All three serials and TOC identities remain the verified set.
 discs = [
-    "/mnt/crucial4tb/Emulation/roms/ps/Final Fantasy VII (USA) (Disc 1)/Final Fantasy VII (USA) (Disc 1).cue",
-    "/mnt/crucial4tb/Emulation/roms/ps/Final Fantasy VII (USA) (Disc 2)/Final Fantasy VII (USA) (Disc 2).cue",
-    "/mnt/crucial4tb/Emulation/roms/ps/Final Fantasy VII (USA) (Disc 3)/Final Fantasy VII (USA) (Disc 3).cue",
+    "disc/Final Fantasy VII (USA) (Disc 1).cue",
+    "disc/Final Fantasy VII (USA) (Disc 2).cue",
+    "disc/Final Fantasy VII (USA) (Disc 3).cue",
 ]
 # Parallel to `discs`. Each disc of the set carries its OWN serial, so the
 # launcher must verify the selected disc against this list rather than against
@@ -87,6 +79,8 @@ memcard_dir = "saves"
 
 [video]
 renderer = "opengl"
+# The shared mod selects 4x; disabling it returns to native.
+internal_resolution = "native"
 aspect_ratio = "4:3"
 
 # Widescreen is MOD-OWNED on PSX: the runtime hardcodes ws_offered = false and
