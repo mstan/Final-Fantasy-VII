@@ -39,7 +39,7 @@
 # reuse_cached_emitters skips rebuilding psxrecomp-game/bios when the
 # psxrecomp submodule SHA cache hits. See docs/ci/BUNDLED_RELEASES.md.
 
-name: Release builds
+name: Legacy prebuilt portability builds
 
 on:
   workflow_dispatch:
@@ -61,18 +61,15 @@ on:
           - major
         default: patch
       publish:
-        description: 'Create git tag vX.Y.Z and GitHub Release'
+        description: 'Legacy prebuilt publication; official release uses the maintained fresh-PGO recipe'
         required: true
         type: boolean
-        default: true
+        default: false
       reuse_cached_emitters:
         description: 'Skip emitter rebuild when build-recompiler cache hits (psxrecomp SHA)'
         required: false
         type: boolean
         default: true
-  push:
-    tags:
-      - 'v*'
 
 concurrency:
   group: finalfantasy7-release-${{ github.event_name }}-${{ github.ref }}-${{ github.run_id }}

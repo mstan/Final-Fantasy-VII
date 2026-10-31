@@ -14,13 +14,19 @@ set(PSXRECOMP_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/psxrecomp" CACHE PATH
 #     set(PSX_NETPLAY ON CACHE BOOL "…" FORCE)
 # endif()
 set(PSX_SETUP_WIZARD ON CACHE BOOL
-    "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
+    "Advertise first-run setup wizard + Generate & rebuild in recomp-ui")
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
+set(_FF7_SETUP_OPTION "")
+if(PSX_SETUP_WIZARD)
+    set(_FF7_SETUP_OPTION ENABLE_SETUP_WIZARD)
+endif()
+
 psxrecomp_add_game_runtime(psx-runtime
+    EXCLUDE_BUILTIN_MODS psx.enhancement.cd-speed psx.enhancement.fast-loading
     # ENABLE_NETPLAY_IF_PRESENT
     # NETPLAY_LOBBY_URL "ws://netplay.retcomm.net:8765"
-    ENABLE_SETUP_WIZARD
+    ${_FF7_SETUP_OPTION}
     WINDOW_TITLE "Final Fantasy 7"
     DEFAULT_GAME_CONFIG_PATH "game.toml"
     MAX_PLAYERS 1
@@ -39,6 +45,7 @@ psxrecomp_add_game_runtime(psx-runtime
         # Game-owned trusted mod plugins (widescreen). Registered by a
         # constructor, selected by mods/preloaded/packages/ff7.enhancements.
         "${CMAKE_CURRENT_SOURCE_DIR}/src/ff7_mods.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/ff7_auto_disc.c"
 )
 
 # Stage runtime configs next to the exe for direct build/ launches. Only copy

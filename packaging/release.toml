@@ -1,0 +1,47 @@
+schema = 1
+
+[product]
+name = "finalfantasy7"
+display_name = "Final Fantasy VII"
+exe_name = "Final_Fantasy_7"
+version_file = "VERSION"
+player_game_toml = "packaging/release/game.toml"
+launcher_boxart = "launcher_assets/img/boxart.tga"
+
+[build]
+regenerate = true
+cmake_args = [
+    "-DPSX_SETUP_WIZARD=OFF",
+    "-DPSXRECOMP_FORCE_SETUP_HOST=OFF",
+    "-DPSXRECOMP_REQUIRE_GAME_C=ON",
+    "-DPSX_SDL_BACKEND=SDL3",
+    "-DPSX_ENABLE_VULKAN=ON",
+    "-DBUILD_TESTING=ON",
+    "-DPSX_NETPLAY=OFF",
+]
+
+[aot]
+# No separate audited static-overlay inventory is declared by this title.
+# Preserve the bundled toolchain for runtime-discovered executable ranges.
+mode = "none"
+
+[overlay_toolchain]
+ship = true
+
+[payload]
+start_here = "packaging/release/START_HERE.txt"
+files = [
+    "VERSION",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "THIRD_PARTY_ATTRIBUTION.md",
+    "DISC.md",
+    "docs/AUTO_DISC.md",
+]
+
+[linux]
+app_run = "packaging/linux/AppRun"
+desktop_file = "packaging/linux/io.github.mstan.FinalFantasy7Recomp.desktop"
+icon = "launcher_assets/img/boxart.png"
+payload_dir = "finalfantasy7"
+env_prefix = "FF7_RECOMP"

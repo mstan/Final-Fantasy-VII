@@ -1,0 +1,16 @@
+Final Fantasy VII @VERSION@
+
+Open Final_Fantasy_7.exe and select your own supported USA game images.
+The supported set has disc serials SCUS-94163, SCUS-94164 and SCUS-94165.
+You may place the three CUE/BIN pairs under disc/ using the names in DISC.md.
+Game images are not included. OpenBIOS is bundled.
+
+Internal Resolution is enabled at 4x by default. Mods offers Native (1x)
+through 32x and remembers your selection. GPU and memory limits may reduce
+the effective scale. Disabling this mod uses native resolution.
+
+Automatic Disc Switching is enabled by default; configure all three images
+to use it. You can also select a disc manually. Native memory cards live
+under saves/. Preserve your existing cards and settings when updating.
+
+The existing experimental Widescreen option remains available in Mods.

@@ -1,5 +1,26 @@
 # Final Fantasy 7
 
+## Optimization rollout (0.1.8)
+
+Internal Resolution is enabled at 4x by default, with saved Native (1x)
+through 32x choices in Mods and the renderer's hardware/memory guards.
+The shared engine optimizations are enabled by default. Native cards and
+existing digital input remain; Automatic Disc Switching from PR #7 stays
+on by default when all three images are configured. See [DISC.md](DISC.md).
+
+Build an owned-disc production package with the maintained recipe:
+
+```bash
+python3 psxrecomp/tools/package_title_release.py package --root . --channel public --platform windows
+```
+
+`tools/release.ps1` and `tools/release.sh` wrap that command. It regenerates
+from the original boot program and uses fresh selective runtime PGO.
+The older positional `scripts/package_release.sh` remains available for
+its existing prebuilt CI callers. The new Windows package is published on
+[the owner's public fork](https://github.com/mstan/Final-Fantasy-VII/releases)
+while the upstream integration PR is pending.
+
 <!-- retcomm-readme-metrics -->
 [![GitHub downloads (all assets, all releases)](https://img.shields.io/github/downloads/TechnicallyComputers/Final-Fantasy-VII/total)](https://github.com/TechnicallyComputers/Final-Fantasy-VII/releases)
 [![GitHub downloads (latest release)](https://img.shields.io/github/downloads/TechnicallyComputers/Final-Fantasy-VII/latest/total)](https://github.com/TechnicallyComputers/Final-Fantasy-VII/releases/latest)

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=@APP_NAME@
+Comment=Final Fantasy VII
+Exec=AppRun
+Icon=io.github.mstan.FinalFantasy7Recomp
+Categories=Game;
+Terminal=false

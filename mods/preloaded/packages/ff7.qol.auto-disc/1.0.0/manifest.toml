@@ -1,0 +1,22 @@
+format_version = 6
+id = "ff7.qol.auto-disc"
+version = "1.0.0"
+name = "Automatic Disc Switching"
+author = "Final Fantasy VII Recompiled project"
+description = "Insert the requested disc automatically when the game asks for it. Uses your configured disc images."
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SCUS-94163"
+
+[[feature]]
+id = "auto-disc"
+name = "Automatic Disc Switching"
+channel = "stable"
+group = "Quality of Life"
+description = "Switch discs at the game's insert-disc prompt. Configure all three disc images first. Disable this option to switch manually through the game menu."
+default_enabled = true
+
+[[plugin]]
+feature = "auto-disc"
+id = "ff7.auto-disc"
