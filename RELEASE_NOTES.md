@@ -1,3 +1,14 @@
+# 0.1.9
+
+Restore hardware pitch modulation used by the battle-entry sweep and Cloud's
+sword attack. The SPU now uses the preceding voice's post-envelope output before
+channel volume, applies the full pitch register before saturation, and preserves
+sample-position overshoot across ADPCM blocks.
+
+Widescreen defaults to Fit to screen for fresh settings. Existing saved mod and
+aspect choices remain authoritative. Internal Resolution still defaults to 4x;
+Automatic Disc Switching stays enabled. CD Speed and Fast Loading are excluded.
+
 # 0.1.8
 
 This rollout updates the shared engine to the merged optimization bundle.
