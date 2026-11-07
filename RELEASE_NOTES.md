@@ -1,3 +1,16 @@
+# 0.1.10
+
+Correct the SPU noise clock's phase handling when its frequency changes. A
+slow-to-fast transition could hold the preceding noise signal for about 424 ms.
+The corrected divider and fractional phases match reference PCM across all 64
+noise clock controls and dynamic frequency changes, within one rounding unit
+after output-gain normalization. Current-build restore and audio-block
+partition checks pass. Battle entry and Cloud's attack were exercised with
+captured PCM; this does not establish complete audible SFX accuracy.
+
+Fresh settings retain Fit to screen and 4x internal resolution. Existing saved
+choices remain authoritative. CD Speed and Fast Loading are excluded.
+
 # 0.1.9
 
 Restore hardware pitch modulation used by the battle-entry sweep and Cloud's
