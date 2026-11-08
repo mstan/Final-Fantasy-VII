@@ -102,6 +102,16 @@ by us**. The default-off *Hook Trace (developer)* feature in the Mods list is
 how you promote one: arm it, do the thing the name claims to describe, and see
 whether the call fires.
 
+## Playtest Diagnostics
+
+In **Mods > Playtest Diagnostics**, enable **Input Recording** to capture a bug
+for offline gameplay replay, and optionally enable **Input Display**. Quit
+normally, then zip the complete session under `saves/diagnostics/`; the latest
+path is also listed in `diagnostics-location.txt` beside the executable.
+Both controls default off in public releases. Recording saves inputs and
+starting saves/settings, rather than an MP4 or audio file. See
+[collection, storage, sharing and replay instructions](docs/DIAGNOSTICS.md).
+
 ## Legal
 
 You must own the original game. Disc images under `disc/` are gitignored and

@@ -28,6 +28,13 @@ mode = "none"
 [overlay_toolchain]
 ship = true
 
+[diagnostics]
+game_id = "SCUS-94163"
+package_id = "ff7.diagnostics"
+replay_helper = true
+# Retain this title's existing optional HD texture catalog surface.
+allow_hd_textures = true
+
 [payload]
 start_here = "packaging/release/START_HERE.txt"
 files = [
@@ -37,6 +44,7 @@ files = [
     "THIRD_PARTY_ATTRIBUTION.md",
     "DISC.md",
     "docs/AUTO_DISC.md",
+    "docs/DIAGNOSTICS.md",
 ]
 
 [linux]

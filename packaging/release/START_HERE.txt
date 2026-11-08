@@ -13,4 +13,34 @@ Automatic Disc Switching is enabled by default; configure all three images
 to use it. You can also select a disc manually. Native memory cards live
 under saves/. Preserve your existing cards and settings when updating.
 
-The existing experimental Widescreen option remains available in Mods.
+Widescreen defaults to Fit to screen for fresh settings. Existing saved
+aspect and mod choices remain authoritative.
+
+RECORDING A BUG REPORT
+
+In the launcher, open Mods > Playtest Diagnostics. Enable Input Recording
+and optionally Input Display, then launch the game and reproduce the bug.
+The display shows REC while recording. Both options default off in public
+releases. Turn Input Recording off again when you finish collecting reports.
+
+Press L3 + R3 together to mark an incident and request a screenshot, or note
+the approximate time of the problem. Quit normally to finish the files.
+Open diagnostics-location.txt beside Final_Fantasy_7.exe for the session path.
+Normally it is saves/diagnostics/session-<timestamp>/ in this game folder.
+If the game folder is not writable, look under
+%TEMP%/psxrecomp-diagnostics/SCUS-94163/session-<timestamp>/ instead.
+
+Zip the ENTIRE session folder, including inputs.csv, telemetry.csv,
+session.json, starting memory cards, mod choices and any incident screenshots.
+Send the ZIP or a private download link to the maintainer in your report.
+You can open a report at:
+https://github.com/TechnicallyComputers/Final-Fantasy-VII/issues/new
+Include the release version, actions that trigger the bug and its approximate
+time or incident number. The bundle includes starting saves; choose a private
+sharing route if you do not want those posted publicly. Do not include your
+disc images or BIOS.
+
+This records replay data, not an MP4 or audio file. The maintainer can rerun
+the inputs using the same build and disc, including the game's generated
+audio. For sound problems, a separate short recording is also useful.
+See docs/DIAGNOSTICS.md for file details, replay commands and limitations.

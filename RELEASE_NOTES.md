@@ -1,3 +1,24 @@
+# 0.1.11
+
+Add the optional Playtest Diagnostics mod, using the shared PSXRecomp gameplay
+input recorder and verified offline replay helper. Input Recording and Input
+Display are separate controls and default off in public releases.
+
+To collect a bug, open **Mods > Playtest Diagnostics**, enable **Input
+Recording** and optionally **Input Display**, then reproduce it and quit
+normally. **L3 + R3** marks an incident and requests a screenshot. Zip the
+entire `saves/diagnostics/session-<timestamp>/` folder; `diagnostics-location.txt`
+beside the executable identifies the latest location. If the game folder is
+read-only, sessions fall back to
+`%TEMP%/psxrecomp-diagnostics/SCUS-94163/`. Send the ZIP or a private download link
+to the maintainer in your report, with the version, reproduction steps and
+approximate time or incident number. It includes starting memory-card saves.
+
+This captures replay data, not MP4/audio files. See the bundled
+`docs/DIAGNOSTICS.md` and `START_HERE.txt` for storage details, reporting links,
+file contents and replay commands. `replay-diagnostics.py` ships beside the
+executable. The earlier SPU corrections and fresh Fit to screen default remain.
+
 # 0.1.10
 
 Correct the SPU noise clock's phase handling when its frequency changes. A
