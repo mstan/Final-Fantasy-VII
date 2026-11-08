@@ -46,7 +46,7 @@ static void ff7_enable_widescreen(void) {
      * adaptive flag, so it cannot come second. */
     (void)psx_mod_set_fixed_display_aspect(16, 9);
 
-    if (strcmp(mode, "adaptive") == 0) {
+    if (!mode[0] || strcmp(mode, "adaptive") == 0) {
         /* Live ratio is clamped to 4:3 on the narrow side and to this maximum
          * on the wide side. 16:9 rather than 21:9 is deliberate — see the
          * manifest description; nothing about FF7's backgrounds has been shown

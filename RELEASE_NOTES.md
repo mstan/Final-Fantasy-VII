@@ -1,3 +1,48 @@
+# 0.1.11
+
+Add the optional Playtest Diagnostics mod, using the shared PSXRecomp gameplay
+input recorder and verified offline replay helper. Input Recording and Input
+Display are separate controls and default off in public releases.
+
+To collect a bug, open **Mods > Playtest Diagnostics**, enable **Input
+Recording** and optionally **Input Display**, then reproduce it and quit
+normally. **L3 + R3** marks an incident and requests a screenshot. Zip the
+entire `saves/diagnostics/session-<timestamp>/` folder; `diagnostics-location.txt`
+beside the executable identifies the latest location. If the game folder is
+read-only, sessions fall back to
+`%TEMP%/psxrecomp-diagnostics/SCUS-94163/`. Send the ZIP or a private download link
+to the maintainer in your report, with the version, reproduction steps and
+approximate time or incident number. It includes starting memory-card saves.
+
+This captures replay data, not MP4/audio files. See the bundled
+`docs/DIAGNOSTICS.md` and `START_HERE.txt` for storage details, reporting links,
+file contents and replay commands. `replay-diagnostics.py` ships beside the
+executable. The earlier SPU corrections and fresh Fit to screen default remain.
+
+# 0.1.10
+
+Correct the SPU noise clock's phase handling when its frequency changes. A
+slow-to-fast transition could hold the preceding noise signal for about 424 ms.
+The corrected divider and fractional phases match reference PCM across all 64
+noise clock controls and dynamic frequency changes, within one rounding unit
+after output-gain normalization. Current-build restore and audio-block
+partition checks pass. Battle entry and Cloud's attack were exercised with
+captured PCM; this does not establish complete audible SFX accuracy.
+
+Fresh settings retain Fit to screen and 4x internal resolution. Existing saved
+choices remain authoritative. CD Speed and Fast Loading are excluded.
+
+# 0.1.9
+
+Restore hardware pitch modulation used by the battle-entry sweep and Cloud's
+sword attack. The SPU now uses the preceding voice's post-envelope output before
+channel volume, applies the full pitch register before saturation, and preserves
+sample-position overshoot across ADPCM blocks.
+
+Widescreen defaults to Fit to screen for fresh settings. Existing saved mod and
+aspect choices remain authoritative. Internal Resolution still defaults to 4x;
+Automatic Disc Switching stays enabled. CD Speed and Fast Loading are excluded.
+
 # 0.1.8
 
 This rollout updates the shared engine to the merged optimization bundle.

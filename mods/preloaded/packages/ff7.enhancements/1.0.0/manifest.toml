@@ -6,13 +6,13 @@ id = "ff7.enhancements"
 version = "1.0.0"
 name = "Final Fantasy VII Enhancements"
 author = "Final Fantasy VII Recompiled project"
-description = "Optional presentation enhancements, each independently toggleable and off by default."
+description = "Presentation enhancements with independently saved controls. Widescreen defaults to Fit to screen."
 save_compatibility = "shared"
 
 # Channels are per feature (format 6). This catalog used to carry a
 # package-level channel = "developer", which quarantined BOTH features because
 # one of them was an instrument -- so no FF7 player ever saw either. Widescreen
-# is now experimental (it ships, badged, default off) and hook-trace stays
+# is experimental (it ships, badged) and hook-trace stays
 # developer (absent from any release build). Nothing had to be split into a
 # second package to say that.
 
@@ -31,7 +31,7 @@ name = "Widescreen"
 channel = "experimental"
 description = "Renders a wider field of view instead of stretching the 4:3 image. EXPERIMENTAL and unvalidated on this title: FF7's field screens are pre-rendered 2D backdrops, so a wider view there can only reveal what the backdrop bitmap happens to contain. Fully 3D scenes (battles, the world map) are where this is expected to hold up. FMV and the BIOS boot stay 4:3."
 group = "Graphics"
-default_enabled = false
+default_enabled = true
 
 [[option]]
 feature = "widescreen"
@@ -40,7 +40,7 @@ label = "Aspect"
 description = "Fixed opens and stays at 16:9. Adaptive follows the window as you resize it, clamped between 4:3 and 16:9; the initial window is 16:9 either way."
 group = "Graphics"
 type = "choice"
-default = "fixed-16-9"
+default = "adaptive"
 
 [[option.choice]]
 value = "fixed-16-9"
@@ -48,7 +48,7 @@ label = "16:9"
 
 [[option.choice]]
 value = "adaptive"
-label = "Adaptive (follows the window)"
+label = "Fit to screen"
 
 [[plugin]]
 feature = "widescreen"
